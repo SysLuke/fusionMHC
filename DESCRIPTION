@@ -1,0 +1,17 @@
+Package: fusionMHC
+Type: Package
+Title: predict the binding affinity of fusion peptides to MHC molecules
+Version: 0.1.0
+Author:  person(given = 'Xiaole', family = 'Lu', email = '1987507228@qq.com', role = 'aut')
+Maintainer: Jianmei Zhong <1924548957@qq.com>
+Description: This R package implements the prediction of fusion peptide binding affinity to HLA-A0201 and HLA-A1101.
+License: GPL (>=3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+BugReports: https://github.com/xiaoleLu/fusionMHC
+RoxygenNote: 7.2.3
+LazyData: true
+NeedsCompilation: no
+Depends: R (>= 4.0.0)
+Imports: dplyr, data.table, reshape2, stringr, tibble, tidyr, Matrix, Biostrings, ggplot2, 
+        ggpubr, cowplot, stats, utils, grDevices, methods, rtracklayer, ComplexHeatmap, DESeq2, MAST, grid
