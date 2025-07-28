@@ -9,7 +9,7 @@
 #' @param bar.width set bar.width
 #' @param ncol number of columns to combine multiple feature plots to
 #' @return a ggplot2 object
-#' @import ggplot2 ggpubr
+#' @import ggplot2 ggpubr dplyr
 #' @importFrom stats setNames
 #' @export
 #' @examples
@@ -31,22 +31,13 @@ plot_sample_summary <- function(obj,
   if(plot.type == 'barplot'){
     pl = list()
     for(f in features){
-      tmp = pd[order(pd[[f]],decreasing = T),]
-      tmp = tmp[1:min(nrow(tmp), topN),]
-      tmp$sample = factor(tmp$sample, levels = tmp$sample)
-
-       g = ggplot(data = tmp, mapping = aes(x=.data[['sample']], y=.data[[f]], fill = .data[[f]])) +
-         ggpubr::theme_classic2(base_size = 14) +
-        geom_bar(width = bar.width, stat = 'identity') +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), plot.margin = unit(c(5,5,5,10),'pt'),
-              legend.key.width = unit(10, 'pt')) + labs(x=NULL, y=NULL, title = f) +
-        guides(fill = guide_colorbar(title = NULL)) +
-        scale_fill_distiller(palette = "Spectral", direction = -1) +
-         guides(fill = 'none')
-
        if(!is.null(group)){
+         tmp = pd
          tmp$.tmp = tmp[[group]]
-         g = ggplot(data = tmp, mapping = aes(x=.data[['sample']], y=.data[[f]], fill = .data[[f]])) +
+         tmp$sample = rownames(tmp)
+         tmp2 = tmp %>% group_by(group) %>% arrange(desc(.data[[f]])) %>% top_n(n = topN,wt=.data[[f]])
+         tmp2$sample = factor(tmp2$sample, levels = unique(tmp2$sample))
+         g = ggplot(data = tmp2, mapping = aes(x=.data[['sample']], y=.data[[f]], fill = .data[[f]])) +
            ggpubr::theme_classic2(base_size = 14) +
            geom_bar(width = bar.width, stat = 'identity') +
            theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), plot.margin = unit(c(5,5,5,10),'pt'),
@@ -57,6 +48,18 @@ plot_sample_summary <- function(obj,
            theme(strip.background = element_rect(colour = 'transparent')) +
            guides(fill = 'none')
          tmp$.tmp = NULL
+       } else{
+         tmp = pd[order(pd[[f]],decreasing = T),]
+         tmp = tmp[1:min(nrow(tmp), topN),]
+         tmp$sample = factor(tmp$sample, levels = tmp$sample)
+         g = ggplot(data = tmp, mapping = aes(x=.data[['sample']], y=.data[[f]], fill = .data[[f]])) +
+           ggpubr::theme_classic2(base_size = 14) +
+           geom_bar(width = bar.width, stat = 'identity') +
+           theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), plot.margin = unit(c(5,5,5,10),'pt'),
+                 legend.key.width = unit(10, 'pt')) + labs(x=NULL, y=NULL, title = f) +
+           guides(fill = guide_colorbar(title = NULL)) +
+           scale_fill_distiller(palette = "Spectral", direction = -1) +
+           guides(fill = 'none')
        }
        pl[[f]] = g
     }
