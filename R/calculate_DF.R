@@ -43,7 +43,7 @@ calculate_DF <- function(obj, group, nameT, nameC, at.least.nSample=1){
   pct.2 = Matrix::rowSums(counts[,samC]>0)
 
   # DESeq2
-  dds <- DESeq2::DESeqDataSetFromMatrix(counts, colData = cond.info, design=~cond)
+  dds <- DESeq2::DESeqDataSetFromMatrix(counts+1, colData = cond.info, design=~cond) # pseudo-count of 1 to every entry for calculating geometric mean
   dds2 <- DESeq2::DESeq(dds,quiet = T, fitType='local')
   x <- as.data.frame(DESeq2::results(dds2, contrast=c("cond",nameT,nameC),cooksCutoff=FALSE, independentFiltering=FALSE))
   data.table::setnames(x, old = c('log2FoldChange','P.Value','pvalue','PValue','adj.P.Val','FDR','padj'),
