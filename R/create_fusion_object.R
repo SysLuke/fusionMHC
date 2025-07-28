@@ -30,7 +30,11 @@ create_fusion_object <- function(input.dir, min.count = 3, info = NULL){
                              'Fusion.sequence' = 'Fusion_sequence',
                              'Fusion.description' = 'Fusion_description',
                              'counts' = 'Spanning_unique_reads')
-    x <- x[x$counts > min.count,]
+    x <- x[which(x$counts > min.count),]
+    if(nrow(x) == 0){
+	    return(NULL)
+	    next
+    }
 
     tmp <- data.table::tstrsplit(x$`Fusion_point_for_gene_1(5end_fusion_partner)`, ":", fixed = TRUE)
     x$Chr.5 = tmp[[1]]; x$Position.5 = tmp[[2]]; x$Strand.5 = tmp[[3]]
@@ -38,6 +42,7 @@ create_fusion_object <- function(input.dir, min.count = 3, info = NULL){
     x$Chr.3 = tmp[[1]]; x$Position.3 = tmp[[2]]; x$Strand.3 = tmp[[3]]
 
     x = x %>% tidyr::unite(col='chimericRNA', c('Fusion.genes','Chr.5','Position.5','Strand.5','Chr.3','Position.3','Strand.3'),sep="#", remove = F)
+    x = x[!duplicated(x$chimericRNA),]
     return(x)
   })
   fTable = do.call(rbind, fList)
@@ -70,7 +75,10 @@ create_fusion_object <- function(input.dir, min.count = 3, info = NULL){
   obj = new('FusionSet', count = count, sample.data = pd, feature.data = fd, version='0.1.0')
 
   if(!is.null(info)){
-    obj@sample.data[rownames(info), colnames(info)] = info
+    pd = obj@sample.data
+    os = intersect(rownames(pd),rownames(info))
+    pd[os, colnames(info)] = info[os,]
+    obj@sample.data = pd
   }
   return(obj)
 }

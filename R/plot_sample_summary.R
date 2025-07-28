@@ -60,7 +60,7 @@ plot_sample_summary <- function(obj,
        }
        pl[[f]] = g
     }
-    g = cowplot::plot_grid(plotlist = pl, ncol=ncol)
+    g = cowplot::plot_grid(plotlist = pl, ncol=ncol, align = "vh")
   } else if(plot.type == 'boxplot'){
     if(is.null(group)) stop('it requires group for boxplot')
 

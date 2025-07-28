@@ -92,6 +92,7 @@ predict_PTC <- function(obj, gtf.ele.list, fa.set){
   out = do.call(rbind, out)
 
   out = out[which(out$PTC == "Yes"),]
+  out$PCT = NULL
   message(nrow(out), " PTC events found in total.")
   obj@PTC = out
   return(obj)
