@@ -50,7 +50,7 @@ calculate_DF <- function(obj, group, nameT, nameC, at.least.nSample=1){
                        new = c('log2FC','Pvalue_deseq2','Pvalue_deseq2','Pvalue_deseq2','Padj_deseq2','Padj_deseq2','Padj_deseq2'), skip_absent=T)
   x = cbind(pct.1=pct.1[rownames(x)],pct.2=pct.2[rownames(x)],x)
   x = tibble::rownames_to_column(x, var='chimericRNA')
-
+  x$baseMean = x$baseMean-1
 
   # MAST
   latent.vars = cond.info
