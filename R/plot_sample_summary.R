@@ -68,7 +68,7 @@ plot_sample_summary <- function(obj,
     for(f in features){
       if(is.null(group.colors)){
         ngroup = length(unique(pd[[group]]))
-        group.colors = setNames(grDevices::rainbow(ngroup), unique(tmp[[group]]))
+        group.colors = setNames(grDevices::rainbow(ngroup), unique(pd[[group]]))
       }
       g = ggplot(data = pd, mapping = aes(x = .data[[group]], y = .data[[f]], fill = .data[[group]])) +
         geom_boxplot(outlier.shape = NA) +
