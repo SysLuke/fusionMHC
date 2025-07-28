@@ -14,7 +14,7 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' obj = plot_sample_summary(obj,features = c('nFusion','nCount'), group='group')
+#' plot_sample_summary(obj,features = c('nFusion','nCount'), group='group')
 #' }
 
 plot_sample_summary <- function(obj,
@@ -33,9 +33,11 @@ plot_sample_summary <- function(obj,
     for(f in features){
        if(!is.null(group)){
          tmp = pd
+         print(head(tmp))
          tmp$.tmp = tmp[[group]]
-         tmp$sample = rownames(tmp)
+         print(head(tmp))
          tmp2 = tmp %>% group_by(group) %>% arrange(desc(.data[[f]])) %>% top_n(n = topN,wt=.data[[f]])
+         print(head(tmp2))
          tmp2$sample = factor(tmp2$sample, levels = unique(tmp2$sample))
          g = ggplot(data = tmp2, mapping = aes(x=.data[['sample']], y=.data[[f]], fill = .data[[f]])) +
            ggpubr::theme_classic2(base_size = 14) +
